@@ -1,0 +1,33 @@
+apiVersion: apps/v1 # for versions before 1.9.0 use apps/v1beta2
+kind: Deployment
+metadata:
+  name: unifi-deployment
+spec:
+  selector:
+    matchLabels:
+      app: unifi
+  replicas: 1 # tells deployment to run 2 pods matching the template
+  template:
+    metadata:
+      labels:
+        app: unifi
+    spec:
+      containers:
+      - env:
+        - name: RUNAS_UID0
+          value: "false"              
+        name: unifi
+        image: jacobalberty/unifi
+        volumeMounts:
+        - mountPath: /unifi/data
+          name: data-vol
+        - mountPath: /unifi/log
+          name: log-vol
+      volumes:
+      - name: data-vol
+        hostPath: 
+          path: /home/shyam/kube-deployments/unifi/data  # TODO: Switch with your local path
+      - name: log-vol
+        hostPath:
+          path: /home/shyam/kube-deployments/unifi/log  # TODO: Switch with your local path
+      hostNetwork: true
